@@ -44,41 +44,6 @@ export async function activate(context: ExtensionContext) {
 
   const executable = new Executable(context);
 
-  // Auto install if not installed
-  if (!executable.checkInstalled()) {
-    logger.appendLine('stylua not found');
-    const opts = executable.isCustomPath ? [] : ['Install'];
-    const ans = await window.showErrorMessage('stylua not found.', ...opts);
-    if (ans === 'Install') {
-      logger.appendLine('Selected installing stylua');
-      await executable.download();
-    }
-    return [];
-  }
-
-  // Check automatic update
-  if (workspace.getConfiguration('stylua').get('checkUpdate', true)) {
-    try {
-      const result = await executable.checkVersion();
-      if (result.result === 'different') {
-        logger.appendLine('stylua is not latest');
-        const ans = await window.showInformationMessage(
-          `stylua is not latest. current: ${result.currentVersion}, latest: ${result.latestVersion}`,
-          'Update',
-          'OK'
-        );
-
-        if (ans === 'Update') {
-          logger.appendLine('Selected updating stylua');
-          await executable.download();
-        }
-      }
-    } catch (err) {
-      logger.appendLine(`failed to fetch update: ${err}`);
-      window.showErrorMessage(`Failed to fetch update for stylua: ${err}`);
-    }
-  }
-
   context.subscriptions.push(
     commands.registerCommand('stylua.reinstall', async () => {
       try {
@@ -99,7 +64,15 @@ export async function activate(context: ExtensionContext) {
     // token: CancellationToken
   ): Promise<TextEdit[]> {
     const styluaPath = executable.path;
-    if (!styluaPath) return [];
+    if (!styluaPath) {
+      // Ignore Promise<T> in order not to block Vim itself. Formatting is
+      // often called in synchronous manner, as in CocAction() in BufWritePre
+      // autocmd, but it causes deadlock.
+      // FIXME: Find better way to avoid blocking
+      const _ = ensureInstalled(executable);
+      _;
+      return [];
+    }
 
     logVersion(styluaPath);
 
@@ -150,7 +123,58 @@ export async function activate(context: ExtensionContext) {
     languages.registerDocumentRangeFormatProvider(['lua'], { provideDocumentRangeFormattingEdits }, 999),
     languages.registerDocumentFormatProvider(['lua'], { provideDocumentFormattingEdits }, 999)
   );
+
+  // Auto install if not installed
+  if (!(await ensureInstalled(executable))) return;
+
+  // Check automatic update
+  if (workspace.getConfiguration('stylua').get('checkUpdate', true)) {
+    await ensureLatest(executable);
+  }
 }
 
 // this method is called when your extension is deactivated
 export function deactivate() {}
+
+async function ensureInstalled(executable: Executable): Promise<boolean> {
+  try {
+    if (!executable.checkInstalled()) {
+      logger.appendLine('stylua not found');
+      const opts = executable.isCustomPath ? [] : ['Install'];
+      const ans = await window.showErrorMessage('stylua not found.', ...opts);
+      if (ans === 'Install') {
+        logger.appendLine('Selected installing stylua');
+        await executable.download();
+        return true;
+      }
+    }
+  } catch (err) {
+    logger.appendLine(`failed to download stylua: ${err}`);
+    await window.showErrorMessage(`failed to download stylua: ${err}`);
+  }
+  return false;
+}
+
+async function ensureLatest(executable: Executable): Promise<boolean | undefined> {
+  try {
+    const result = await executable.checkVersion();
+    if (result.result === 'different') {
+      logger.appendLine('stylua is not latest');
+      const ans = await window.showInformationMessage(
+        `stylua is not latest. current: ${result.currentVersion}, latest: ${result.latestVersion}`,
+        'Update',
+        'OK'
+      );
+
+      if (ans === 'Update') {
+        logger.appendLine('Selected updating stylua');
+        await executable.download();
+        return true;
+      }
+    }
+  } catch (err) {
+    logger.appendLine(`failed to fetch update: ${err}`);
+    window.showErrorMessage(`Failed to fetch update for stylua: ${err}`);
+  }
+  return false;
+}
