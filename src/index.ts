@@ -1,61 +1,112 @@
-import * as coc from 'coc.nvim';
-import * as util from './util';
-import { formatCode, checkIgnored } from './stylua';
+import {
+  commands,
+  ExtensionContext,
+  languages,
+  OutputChannel,
+  Position,
+  Range,
+  TextDocument,
+  TextEdit,
+  Uri,
+  window,
+  workspace,
+} from 'coc.nvim';
 import path from 'path';
+import { Executable } from './executable';
+import { checkIgnored, formatCode, logVersion } from './stylua';
+
+declare global {
+  var logger: OutputChannel;
+}
 
 /**
  * Convert a Position within a Document to a byte offset.
- * Required as `document.offsetAt(position)` returns a char offset, causing incosistencies when sending over to StyLua
+ * Required as `document.offsetAt(position)` returns a char offset, causing incosistencies when sending over to stylua
  * @param document The document to retreive the byte offset in
  * @param position The possition to retreive the byte offset for
  */
-const byteOffset = (document: coc.TextDocument, position: coc.Position) => {
+const byteOffset = (document: TextDocument, position: Position) => {
   // Retreive all the text from the start of the document to the position provided
-  const textRange = coc.Range.create(document.positionAt(0), position);
+  const textRange = Range.create(document.positionAt(0), position);
   const text = document.getText(textRange);
 
   // Retreive the byte length of the text range in a buffer
   return Buffer.byteLength(text);
 };
 
-export async function activate(context: coc.ExtensionContext) {
-  console.log('stylua activated');
+export async function activate(context: ExtensionContext) {
+  logger = window.createOutputChannel('coc-stylua');
+  logger.appendLine('coc-stylua activated');
 
-  let styluaBinaryPath: string | undefined = await util.ensureStyluaExists(context.storagePath);
-  context.subscriptions.push(
-    coc.commands.registerCommand('stylua.reinstall', async () => {
-      await util.downloadStyLuaVisual(context.storagePath);
-      styluaBinaryPath = await util.getStyluaPath(context.storagePath);
-    })
-  );
+  const statusBarItem = window.createStatusBarItem();
+  statusBarItem.text = 'stylua';
+  statusBarItem.show();
+
+  const executable = new Executable(context);
+
+  // Auto install if not installed
+  if (!executable.checkInstalled()) {
+    logger.appendLine('stylua not found');
+    const opts = executable.isCustomPath ? [] : ['Install'];
+    const ans = await window.showErrorMessage('stylua not found.', ...opts);
+    if (ans === 'Install') {
+      logger.appendLine('Selected installing stylua');
+      await executable.download();
+    }
+    return [];
+  }
+
+  // Check automatic update
+  if (workspace.getConfiguration('stylua').get('checkUpdate', true)) {
+    try {
+      const result = await executable.checkVersion();
+      if (result.result === 'different') {
+        logger.appendLine('stylua is not latest');
+        const ans = await window.showInformationMessage(
+          `stylua is not latest. current: ${result.currentVersion}, latest: ${result.latestVersion}`,
+          'Update',
+          'OK'
+        );
+
+        if (ans === 'Update') {
+          logger.appendLine('Selected updating stylua');
+          await executable.download();
+        }
+      }
+    } catch (err) {
+      logger.appendLine(`failed to fetch update: ${err}`);
+      window.showErrorMessage(`Failed to fetch update for stylua: ${err}`);
+    }
+  }
 
   context.subscriptions.push(
-    coc.workspace.onDidChangeConfiguration(async (change) => {
-      if (change.affectsConfiguration('stylua')) {
-        styluaBinaryPath = await util.ensureStyluaExists(context.storagePath);
+    commands.registerCommand('stylua.reinstall', async () => {
+      try {
+        logger.appendLine('reinstalling stylua...');
+        await executable.download();
+        logger.appendLine('stylua reinstalled');
+      } catch (err) {
+        logger.appendLine(`failed to reinstall: ${err}`);
+        window.showErrorMessage(`Failed to reinstall stylua: ${err}`);
       }
     })
   );
 
   async function provideDocumentRangeFormattingEdits(
-    document: coc.TextDocument,
-    range: coc.Range
-    /* options: coc.FormattingOptions,
-      token: coc.CancellationToken */
-  ) {
-    if (!styluaBinaryPath) {
-      coc.window.showErrorMessage('StyLua not found. Could not format file', 'Install').then((option) => {
-        if (option === 'Install') {
-          util.downloadStyLuaVisual(context.storagePath);
-        }
-      });
-      return [];
-    }
+    document: TextDocument,
+    range: Range
+    // options: FormattingOptions,
+    // token: CancellationToken
+  ): Promise<TextEdit[]> {
+    const styluaPath = executable.path;
+    if (!styluaPath) return [];
 
-    const currentWorkspace = coc.workspace.getWorkspaceFolder(document.uri);
+    logVersion(styluaPath);
+
+    const currentWorkspace = workspace.getWorkspaceFolder(document.uri);
     let cwd = currentWorkspace?.uri;
     if (cwd) {
-      cwd = path.normalize(coc.Uri.parse(cwd).fsPath);
+      cwd = path.normalize(Uri.parse(cwd).fsPath);
     }
 
     if (await checkIgnored(document.uri, currentWorkspace?.uri)) {
@@ -66,7 +117,7 @@ export async function activate(context: coc.ExtensionContext) {
 
     try {
       const formattedText = await formatCode(
-        styluaBinaryPath,
+        styluaPath,
         text,
         cwd,
         byteOffset(document, range.start),
@@ -74,32 +125,30 @@ export async function activate(context: coc.ExtensionContext) {
       );
       // Replace the whole document with our new formatted version
       const lastLineNumber = document.lineCount - 1;
-      const doc = coc.workspace.getDocument(document.uri);
-      const fullDocumentRange = coc.Range.create(
+      const doc = workspace.getDocument(document.uri);
+      const fullDocumentRange = Range.create(
         { line: 0, character: 0 },
         { line: lastLineNumber, character: doc.getline(lastLineNumber).length }
       );
-      const format = coc.TextEdit.replace(fullDocumentRange, formattedText);
+      const format = TextEdit.replace(fullDocumentRange, formattedText);
       return [format];
     } catch (err) {
-      coc.window.showErrorMessage(`Could not format file: ${err}`);
+      logger.appendLine(`Could not format file: ${err}`);
+      window.showErrorMessage(`Could not format file: ${err}`);
       return [];
     }
   }
 
-  async function provideDocumentFormattingEdits(document: coc.TextDocument) {
-    const doc = coc.workspace.getDocument(document.uri);
+  async function provideDocumentFormattingEdits(document: TextDocument) {
+    const doc = workspace.getDocument(document.uri);
     const lastLine = doc.lineCount - 1;
-    const range = coc.Range.create(
-      { character: 0, line: 0 },
-      { character: doc.getline(lastLine).length, line: lastLine }
-    );
+    const range = Range.create({ character: 0, line: 0 }, { character: doc.getline(lastLine).length, line: lastLine });
     return await provideDocumentRangeFormattingEdits(document, range);
   }
 
   context.subscriptions.push(
-    coc.languages.registerDocumentRangeFormatProvider(['lua'], { provideDocumentRangeFormattingEdits }, 999),
-    coc.languages.registerDocumentFormatProvider(['lua'], { provideDocumentFormattingEdits }, 999)
+    languages.registerDocumentRangeFormatProvider(['lua'], { provideDocumentRangeFormattingEdits }, 999),
+    languages.registerDocumentFormatProvider(['lua'], { provideDocumentFormattingEdits }, 999)
   );
 }
 

@@ -1,7 +1,7 @@
 {
   "name": "coc-stylua",
   "version": "0.0.9",
-  "description": "StyLua extension for coc.nvim.",
+  "description": "stylua extension for coc.nvim.",
   "author": "wongxy <xiyao.wong@foxmail.com>",
   "license": "MIT",
   "main": "lib/index.js",
@@ -51,31 +51,12 @@
   ],
   "contributes": {
     "configuration": {
-      "title": "StyLua",
+      "title": "stylua",
       "properties": {
-        "stylua.releaseVersion": {
+        "stylua.version": {
           "type": "string",
           "default": "latest",
-          "enum": [
-            "latest",
-            "v0.12",
-            "v0.11",
-            "v0.10",
-            "v0.9",
-            "v0.8",
-            "v0.7",
-            "v0.6",
-            "v0.5"
-          ],
-          "enumDescriptions": [
-            "The most recent version released. This will always keep you up to date."
-          ],
-          "markdownDescription": "The release version to install. This is overridden by `#stylua.targetReleaseVersion#`."
-        },
-        "stylua.targetReleaseVersion": {
-          "type": "string",
-          "default": "",
-          "markdownDescription": "Target a specific release version tag such as `v0.9.1` or `v0.9`. This overrides the version set by `#stylua.releaseVersion#`."
+          "markdownDescription": "The version to install, or `latest` to install latest release"
         },
         "stylua.styluaPath": {
           "type": [
@@ -83,7 +64,7 @@
             "null"
           ],
           "default": null,
-          "description": "Specifies the path of StyLua. If not specified, will automatically download one from the GitHub releases."
+          "description": "Specifies the path of stylua. If not specified, will automatically download one from the GitHub releases."
         },
         "stylua.configPath": {
           "type": [
@@ -103,9 +84,12 @@
     "commands": [
       {
         "command": "stylua.reinstall",
-        "title": "Reinstall StyLua",
-        "category": "StyLua"
+        "title": "Reinstall stylua",
+        "category": "stylua"
       }
     ]
+  },
+  "dependencies": {
+    "coc-utils": "https://github.com/statiolake/coc-utils"
   }
 }

@@ -1,7 +1,7 @@
 # coc-stylua
 
-[StyLua](https://github.com/JohnnyMorganz/StyLua) extension for coc.nvim.
-Forked from [stylua-vscode](https://github.com/JohnnyMorganz/StyLua/tree/master/stylua-vscode)
+[stylua](https://github.com/JohnnyMorganz/stylua) extension for coc.nvim.
+Forked from [stylua-vscode](https://github.com/JohnnyMorganz/stylua/tree/master/stylua-vscode)
 
 ## Install
 
@@ -16,7 +16,7 @@ You can add "lua" to `coc.preferences.formatOnSaveFiletypes` to format your code
 
 ## Extension Settings
 
-You can specify the path of the StyLua binary using the `stylua.styluaPath` setting.
+You can specify the path of the stylua binary using the `stylua.styluaPath` setting.
 By default, if this is null, the extension will download the binary and store it in its local storage.
 
 You can use `stylua.configPath` to specify path to stylua.toml configuration file.
@@ -25,7 +25,7 @@ You can use `stylua.configPath` to specify path to stylua.toml configuration fil
 
 ## Commands
 
-- `stylua.reinstall` Reinstall StyLua
+- `stylua.reinstall` Reinstall stylua
 
 ## License
 
