@@ -42,6 +42,7 @@ export async function activate(context: ExtensionContext) {
   const statusBarItem = window.createStatusBarItem();
   statusBarItem.text = 'stylua';
   statusBarItem.show();
+  context.subscriptions.push(statusBarItem);
 
   const config = workspace.getConfiguration('stylua');
   const customPath = config.get<string>('customPath');
