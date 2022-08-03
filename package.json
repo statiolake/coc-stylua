@@ -90,6 +90,6 @@
     ]
   },
   "dependencies": {
-    "coc-utils": "https://github.com/statiolake/coc-utils"
+    "@statiolake/coc-utils": "0.0.3"
   }
 }

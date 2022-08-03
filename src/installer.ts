@@ -1,4 +1,4 @@
-import { ILanguageServerPackages, LanguageServerProvider, LanguageServerRepository } from 'coc-utils';
+import { ILanguageServerPackages, LanguageServerProvider, LanguageServerRepository } from '@statiolake/coc-utils';
 import { ExtensionContext, workspace, WorkspaceConfiguration } from 'coc.nvim';
 import { existsSync } from 'fs';
 
@@ -70,7 +70,7 @@ export class Executable {
   }
 }
 
-function getPacks(): ILanguageServerPackages {
+export function getPacks(): ILanguageServerPackages {
   return {
     'win-x64': {
       platformFilename: /stylua-.*win64.zip/,
@@ -90,7 +90,7 @@ function getPacks(): ILanguageServerPackages {
   };
 }
 
-function getRepo(version: string): LanguageServerRepository {
+export function getRepo(version: string): LanguageServerRepository {
   return {
     kind: 'github',
     repo: 'JohnnyMorganz/StyLua',

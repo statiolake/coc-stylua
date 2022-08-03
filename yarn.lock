@@ -73,6 +73,20 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
+"@statiolake/coc-utils@0.0.3":
+  version "0.0.3"
+  resolved "https://registry.yarnpkg.com/@statiolake/coc-utils/-/coc-utils-0.0.3.tgz#a39e6c2b1edcacdef456991b700f228132c7c944"
+  integrity sha512-YfG/UU1iT5UKZuIhav6wSOQECdANktGwPHMkwE98gb9qLkzBDmfAv+COlluqFAEQfxImukoUw0mJHnw5bnEazQ==
+  dependencies:
+    extract-zip "^1.6.7"
+    follow-redirects "^1.7.0"
+    rimraf "^2.6.3"
+    tunnel "0.0.6"
+    vscode-jsonrpc ">=4.0.0"
+    vscode-languageserver-protocol ">=3.14.0"
+    which "^2.0.2"
+    zlib "^1.0.5"
+
 "@types/json-schema@^7.0.7":
   version "7.0.8"
   resolved "https://registry.nlark.com/@types/json-schema/download/@types/json-schema-7.0.8.tgz"
@@ -334,19 +348,6 @@ chalk@^4.0.0:
   dependencies:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
-
-"coc-utils@https://github.com/statiolake/coc-utils":
-  version "0.0.17"
-  resolved "https://github.com/statiolake/coc-utils#aec65d8706732e20dd5fe4c860906f1cf82bfe7e"
-  dependencies:
-    extract-zip "^1.6.7"
-    follow-redirects "^1.7.0"
-    rimraf "^2.6.3"
-    tunnel "0.0.6"
-    vscode-jsonrpc ">=4.0.0"
-    vscode-languageserver-protocol ">=3.14.0"
-    which "^2.0.2"
-    zlib "^1.0.5"
 
 coc.nvim@^0.0.80:
   version "0.0.80"
