@@ -1,13 +1,13 @@
 {
-  "name": "coc-stylua",
+  "name": "@statiolake/coc-stylua",
   "version": "0.0.9",
   "description": "stylua extension for coc.nvim.",
-  "author": "wongxy <xiyao.wong@foxmail.com>",
+  "author": "statiolake <statiolake@gmail.com>",
   "license": "MIT",
   "main": "lib/index.js",
   "repository": {
     "type": "git",
-    "url": "https://github.com/xiyaowong/coc-stylua"
+    "url": "https://github.com/statiolake/coc-stylua"
   },
   "keywords": [
     "coc.nvim"
@@ -83,8 +83,13 @@
     },
     "commands": [
       {
-        "command": "stylua.reinstall",
+        "command": "stylua.install",
         "title": "Reinstall stylua",
+        "category": "stylua"
+      },
+      {
+        "command": "stylua.update",
+        "title": "Update stylua",
         "category": "stylua"
       }
     ]
