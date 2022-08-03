@@ -1,6 +1,6 @@
 {
   "name": "@statiolake/coc-stylua",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "stylua extension for coc.nvim.",
   "author": "statiolake <statiolake@gmail.com>",
   "license": "MIT",
