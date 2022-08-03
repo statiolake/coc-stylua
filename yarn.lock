@@ -73,10 +73,10 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@statiolake/coc-utils@0.0.3":
-  version "0.0.3"
-  resolved "https://registry.yarnpkg.com/@statiolake/coc-utils/-/coc-utils-0.0.3.tgz#a39e6c2b1edcacdef456991b700f228132c7c944"
-  integrity sha512-YfG/UU1iT5UKZuIhav6wSOQECdANktGwPHMkwE98gb9qLkzBDmfAv+COlluqFAEQfxImukoUw0mJHnw5bnEazQ==
+"@statiolake/coc-utils@0.0.4":
+  version "0.0.4"
+  resolved "https://registry.yarnpkg.com/@statiolake/coc-utils/-/coc-utils-0.0.4.tgz#61767c667828abdbf1de54c060eb68a9040c87e2"
+  integrity sha512-j30EvmusIpAILhyRwV4+Zcmi3MwHattSQMzGMaDScMo1jAP2NGVtzQGFkoIXUYRGKc/zfyXNQt99xh22EQWyYA==
   dependencies:
     extract-zip "^1.6.7"
     follow-redirects "^1.7.0"
