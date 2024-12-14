@@ -1,4 +1,4 @@
-import {ILanguageServerPackages, LanguageServerRepository} from '@statiolake/coc-utils';
+import { ILanguageServerPackages, LanguageServerRepository } from '@statiolake/coc-utils';
 
 export function getPacks(): ILanguageServerPackages {
   return {

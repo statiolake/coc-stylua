@@ -3,6 +3,7 @@ import * as coc from 'coc.nvim';
 import { existsSync } from 'fs';
 import ignore from 'ignore';
 import path from 'path';
+import { logger } from './index';
 
 const configPath = coc.workspace.getConfiguration('stylua').get<string>('configPath');
 
@@ -48,7 +49,7 @@ export function formatCode(
   code: string,
   cwd?: string,
   startPos?: number,
-  endPos?: number
+  endPos?: number,
 ): Promise<string> {
   return new Promise((resolve, reject) => {
     const args: string[] = [];

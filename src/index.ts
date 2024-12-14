@@ -16,9 +16,7 @@ import path from 'path';
 import { getPacks, getRepo } from './installer';
 import { checkIgnored, formatCode, logVersion } from './stylua';
 
-declare global {
-  var logger: OutputChannel;
-}
+export const logger: OutputChannel = window.createOutputChannel('coc-stylua');
 
 /**
  * Convert a Position within a Document to a byte offset.
@@ -36,7 +34,6 @@ const byteOffset = (document: TextDocument, position: Position) => {
 };
 
 export async function activate(context: ExtensionContext) {
-  logger = window.createOutputChannel('coc-stylua');
   logger.appendLine('coc-stylua activated');
 
   const statusBarItem = window.createStatusBarItem();
@@ -69,12 +66,12 @@ export async function activate(context: ExtensionContext) {
         logger.appendLine(`failed to update: ${err}`);
         window.showErrorMessage(`Failed to update stylua: ${err}`);
       }
-    })
+    }),
   );
 
   async function provideDocumentRangeFormattingEdits(
     document: TextDocument,
-    range: Range
+    range: Range,
     // options: FormattingOptions,
     // token: CancellationToken
   ): Promise<TextEdit[]> {
@@ -103,14 +100,14 @@ export async function activate(context: ExtensionContext) {
         text,
         cwd,
         byteOffset(document, range.start),
-        byteOffset(document, range.end)
+        byteOffset(document, range.end),
       );
       // Replace the whole document with our new formatted version
       const lastLineNumber = document.lineCount - 1;
       const doc = workspace.getDocument(document.uri);
       const fullDocumentRange = Range.create(
         { line: 0, character: 0 },
-        { line: lastLineNumber, character: doc.getline(lastLineNumber).length }
+        { line: lastLineNumber, character: doc.getline(lastLineNumber).length },
       );
       const format = TextEdit.replace(fullDocumentRange, formattedText);
       return [format];
@@ -130,7 +127,7 @@ export async function activate(context: ExtensionContext) {
 
   context.subscriptions.push(
     languages.registerDocumentRangeFormatProvider(['lua'], { provideDocumentRangeFormattingEdits }, 999),
-    languages.registerDocumentFormatProvider(['lua'], { provideDocumentFormattingEdits }, 999)
+    languages.registerDocumentFormatProvider(['lua'], { provideDocumentFormattingEdits }, 999),
   );
 
   // Auto install or auto update if not installed.
