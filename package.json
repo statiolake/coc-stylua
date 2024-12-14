@@ -28,23 +28,18 @@
     "semi": true
   },
   "devDependencies": {
-    "@types/node": "^16.3.1",
-    "@types/node-fetch": "^2.5.11",
-    "@types/semver": "^7.3.9",
-    "@types/unzipper": "^0.10.4",
-    "@typescript-eslint/eslint-plugin": "^4.8.2",
-    "@typescript-eslint/parser": "^4.8.2",
-    "coc.nvim": "^0.0.80",
-    "esbuild": "^0.8.42",
-    "eslint": "^7.14.0",
-    "eslint-config-prettier": "^8.1.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "node-fetch": "^2.6.1",
-    "prettier": "^2.2.0",
-    "rimraf": "^3.0.2",
-    "semver": "^7.3.7",
-    "typescript": "^4.1.2",
-    "unzipper": "^0.10.11"
+    "@types/node-fetch": "^2.6.12",
+    "@types/semver": "^7.5.8",
+    "@types/unzipper": "^0.10.10",
+    "coc.nvim": "^0.0.82",
+    "esbuild": "^0.24.0",
+    "ignore": "^6.0.2",
+    "node-fetch": "^3.3.2",
+    "prettier": "^3.4.2",
+    "rimraf": "^6.0.1",
+    "semver": "^7.6.3",
+    "typescript": "^4",
+    "unzipper": "^0.12.3"
   },
   "activationEvents": [
     "onLanguage:lua"
@@ -95,6 +90,6 @@
     ]
   },
   "dependencies": {
-    "@statiolake/coc-utils": "0.0.5"
+    "@statiolake/coc-utils": "^0.1.1"
   }
 }

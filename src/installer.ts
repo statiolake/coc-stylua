@@ -1,19 +1,19 @@
-import { ILanguageServerPackages, LanguageServerRepository } from '@statiolake/coc-utils';
+import {ILanguageServerPackages, LanguageServerRepository} from '@statiolake/coc-utils';
 
 export function getPacks(): ILanguageServerPackages {
   return {
     'win-x64': {
-      platformFilename: /stylua-.*win64.zip/,
+      platformFilename: /stylua-windows-x86_64.zip/,
       archiver: 'zip',
       executable: 'stylua.exe',
     },
     'linux-x64': {
-      platformFilename: /stylua-.*linux.zip/,
+      platformFilename: /stylua-linux-x86_64.zip/,
       archiver: 'zip',
       executable: 'stylua',
     },
     'osx-x64': {
-      platformFilename: /stylua-.*macos.zip/,
+      platformFilename: /stylua-macos-x86_64.zip/,
       archiver: 'zip',
       executable: 'stylua',
     },
