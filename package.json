@@ -90,6 +90,6 @@
     ]
   },
   "dependencies": {
-    "@statiolake/coc-utils": "^0.2.0"
+    "@statiolake/coc-utils": "^0.2.4"
   }
 }
