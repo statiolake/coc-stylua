@@ -86,6 +86,11 @@
         "command": "stylua.update",
         "title": "Update stylua",
         "category": "stylua"
+      },
+      {
+        "command": "stylua.version",
+        "title": "Show stylua version",
+        "category": "stylua"
       }
     ]
   },

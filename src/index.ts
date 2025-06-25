@@ -67,6 +67,16 @@ export async function activate(context: ExtensionContext) {
         window.showErrorMessage(`Failed to update stylua: ${err}`);
       }
     }),
+    commands.registerCommand('stylua.version', async () => {
+      const version = await installer.checkVersion();
+      if (version.result === 'different') {
+        window.showInformationMessage(`stylua version: ${version.currentVersion}`);
+      } else if (version.result === 'same') {
+        window.showInformationMessage(`stylua version: ${version.version}`);
+      } else {
+        window.showInformationMessage('stylua version: unknown');
+      }
+    }),
   );
 
   async function provideDocumentRangeFormattingEdits(
