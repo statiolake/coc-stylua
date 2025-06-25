@@ -12,8 +12,18 @@ export function getPacks(): ILanguageServerPackages {
       archiver: 'zip',
       executable: 'stylua',
     },
+    'linux-arm64': {
+      platformFilename: /stylua-linux-aarch64.zip/,
+      archiver: 'zip',
+      executable: 'stylua',
+    },
     'osx-x64': {
       platformFilename: /stylua-macos-x86_64.zip/,
+      archiver: 'zip',
+      executable: 'stylua',
+    },
+    'osx-arm64': {
+      platformFilename: /stylua-macos-aarch64.zip/,
       archiver: 'zip',
       executable: 'stylua',
     },
