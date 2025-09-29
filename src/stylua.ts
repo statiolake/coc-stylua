@@ -74,13 +74,9 @@ export function formatCode(
     logger.appendLine(`  args: ${args}`);
     logger.appendLine(`  cwd: ${cwd}`);
     const child = spawn(styluaPath, args, { cwd });
-    let output = '';
-    child.stdout.on('data', (data) => {
-      output += data.toString();
-    });
-    child.stdout.on('close', () => {
-      resolve(output.trimEnd());
-    });
+    const buffers: Buffer[] = [];
+    child.stdout.on('data', (data) => buffers.push(data));
+    child.stdout.on('close', () => resolve(Buffer.concat(buffers).toString()));
     child.stderr.on('data', (data) => reject(data.toString()));
     child.on('err', () => reject('Failed to start stylua'));
 
